@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Crop Yield Management System{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            color: #28a745 !important;
+        }
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            background-color: #343a40;
+            padding-top: 1rem;
+        }
+        .sidebar .nav-link {
+            color: #adb5bd;
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            margin: 0.25rem 0;
+        }
+        .sidebar .nav-link:hover {
+            color: #fff;
+            background-color: #495057;
+        }
+        .sidebar .nav-link.active {
+            color: #fff;
+            background-color: #28a745;
+        }
+        .main-content {
+            padding: 2rem;
+        }
+        .card {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            border: 1px solid rgba(0, 0, 0, 0.125);
+        }
+        .stats-card {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+        }
+        .btn-primary {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .btn-primary:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+        .alert {
+            border-radius: 0.5rem;
+        }
+        .table {
+            background-color: white;
+        }
+        .footer {
+            background-color: #343a40;
+            color: #adb5bd;
+            padding: 1rem 0;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="fas fa-seedling me-2"></i>Crop Yield System
+            </a>
+            
+            {% if session.email %}
+            <div class="navbar-nav ms-auto">
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user me-1"></i>{{ session.name or session.email }}
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ url_for('dashboard') }}"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            {% if session.email %}
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('dashboard') }}">
+                                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                            </a>
+                        </li>
+                        
+                        {% if session.role in ['farmer', 'agronomist', 'admin'] %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('fields') }}">
+                                <i class="fas fa-map me-2"></i>Fields
+                            </a>
+                        </li>
+                        {% endif %}
+                        
+                        {% if session.role == 'farmer' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('add_field') }}">
+                                <i class="fas fa-plus-circle me-2"></i>Add Field
+                            </a>
+                        </li>
+                        {% endif %}
+                        
+                        {% if session.role in ['farmer', 'agronomist', 'admin'] %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('yields') }}">
+                                <i class="fas fa-chart-line me-2"></i>Yield Data
+                            </a>
+                        </li>
+                        {% endif %}
+                        
+                        {% if session.role == 'farmer' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('record_yield') }}">
+                                <i class="fas fa-clipboard-list me-2"></i>Record Yield
+                            </a>
+                        </li>
+                        {% endif %}
+                        
+                        {% if session.role in ['agronomist', 'admin'] %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('weather') }}">
+                                <i class="fas fa-cloud-sun me-2"></i>Weather Data
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('add_weather') }}">
+                                <i class="fas fa-thermometer-half me-2"></i>Add Weather
+                            </a>
+                        </li>
+                        {% endif %}
+                        
+                        {% if session.role == 'admin' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('admin_users') }}">
+                                <i class="fas fa-users me-2"></i>Manage Users
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+            {% else %}
+            <!-- Full width for non-logged in users -->
+            <main class="col-12 main-content">
+            {% endif %}
+                
+                <!-- Flash Messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                {% if category == 'success' %}
+                                    <i class="fas fa-check-circle me-2"></i>
+                                {% elif category == 'danger' or category == 'error' %}
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                {% elif category == 'warning' %}
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                {% elif category == 'info' %}
+                                    <i class="fas fa-info-circle me-2"></i>
+                                {% endif %}
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Page Content -->
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <small>&copy; {{ current_year }} Crop Yield Management System. Built with AWS & Flask.</small>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Auto-dismiss alerts after 5 seconds
+        setTimeout(function() {
+            var alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                var bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

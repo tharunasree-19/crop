@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Crop Yield Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <span class="badge bg-primary">{{ data.role|title }}</span>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Welcome back, {{ data.name }}!</h5>
+                <p class="card-text text-muted">
+                    <i class="fas fa-envelope me-2"></i>{{ data.email }}
+                    <span class="ms-3"><i class="fas fa-user-tag me-2"></i>{{ data.role|title }}</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if data.role == 'farmer' %}
+<!-- Farmer Dashboard -->
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card stats-card">
+            <div class="card-body text-center">
+                <i class="fas fa-map fa-2x mb-3"></i>
+                <h3>{{ data.total_fields or 0 }}</h3>
+                <p class="mb-0">Total Fields</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card bg-info text-white">
+            <div class="card-body text-center">
+                <i class="fas fa-seedling fa-2x mb-3"></i>
+                <h3>{{ data.my_fields|length if data.my_fields else 0 }}</h3>
+                <p class="mb-0">Active Fields</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if data.my_fields %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-map me-2"></i>My Fields</h5>
+                <a href="{{ url_for('add_field') }}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-plus me-1"></i>Add New Field
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Field Name</th>
+                                <th>Location</th>
+                                <th>Area (Ha)</th>
+                                <th>Crop Type</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for field in data.my_fields %}
+                            <tr>
+                                <td><strong>{{ field.field_name }}</strong></td>
+                                <td><i class="fas fa-map-marker-alt me-1"></i>{{ field.location }}</td>
+                                <td>{{ "%.2f"|format(field.area_hectares|float) }}</td>
+                                <td>
+                                    {% if field.crop_type %}
+                                        <span class="badge bg-success">{{ field.crop_type }}</span>
+                                    {% else %}
+                                        <span class="text-muted">Not specified</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge bg-success">{{ field.status|title }}</span>
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('record_yield') }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-clipboard-list me-1"></i>Record Yield
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="fas fa-map fa-3x text-muted mb-3"></i>
+                <h5>No Fields Added Yet</h5>
+                <p class="text-muted mb-4">Start by adding your first field to begin tracking crop yields.</p>
+                <a href="{{ url_for('add_field') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Add Your First Field
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% elif data.role == 'agronomist' %}
+<!-- Agronomist Dashboard -->
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card stats-card">
+            <div class="card-body text-center">
+                <i class="fas fa-map fa-2x mb-3"></i>
+                <h3>{{ data.total_fields or 0 }}</h3>
+                <p class="mb-0">Total Fields</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card bg-info text-white">
+            <div class="card-body text-center">
+                <i class="fas fa-cloud-sun fa-2x mb-3"></i>
+                <h3>Active</h3>
+                <p class="mb-0">Weather Monitoring</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card bg-warning text-white">
+            <div class="card-body text-center">
+                <i class="fas fa-chart-line fa-2x mb-3"></i>
+                <h3>Analytics</h3>
+                <p class="mb-0">Yield Analysis</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-tasks me-2"></i>Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('weather') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-cloud-sun me-2"></i>View Weather Data
+                    </a>
+                    <a href="{{ url_for('add_weather') }}" class="btn btn-outline-success">
+                        <i class="fas fa-plus me-2"></i>Add Weather Record
+                    </a>
+                    <a href="{{ url_for('yields') }}" class="btn btn-outline-info">
+                        <i class="fas fa-chart-line me-2"></i>Analyze Yields
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>System Overview</h5>
+            </div>
+            <div class="card-body">
+                <p>Monitor and manage crop yield data across all registered fields.</p>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-check text-success me-2"></i>Weather data collection</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Yield analysis tools</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Field monitoring</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% elif data.role == 'admin' %}
+<!-- Admin Dashboard -->
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card stats-card">
+            <div class="card-body text-center">
+                <i class="fas fa-users fa-2x mb-3"></i>
+                <h3>{{ data.total_users or 0 }}</h3>
+                <p class="mb-0">Total Users</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card bg-info text-white">
+            <div class="card-body text-center">
+                <i class="fas fa-map fa-2x mb-3"></i>
+                <h3>{{ data.total_fields or 0 }}</h3>
+                <p class="mb-0">Total Fields</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card bg-warning text-white">
+            <div class="card-body text-center">
+                <i class="fas fa-cog fa-2x mb-3"></i>
+                <h3>System</h3>
+                <p class="mb-0">Management</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-tachometer-alt me-2"></i>System Status</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>User Management</h6>
+                        <p class="text-muted">{{ data.total_users or 0 }} registered users</p>
+                        <a href="{{ url_for('admin_users') }}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-users me-1"></i>Manage Users
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Field Management</h6>
+                        <p class="text-muted">{{ data.total_fields or 0 }} active fields</p>
+                        <a href="{{ url_for('fields') }}" class="btn btn-outline-success btn-sm">
+                            <i class="fas fa-map me-1"></i>View Fields
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-tools me-2"></i>Admin Tools</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('admin_users') }}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-users me-2"></i>User Management
+                    </a>
+                    <a href="{{ url_for('yields') }}" class="btn btn-outline-success btn-sm">
+                        <i class="fas fa-chart-line me-2"></i>Yield Reports
+                    </a>
+                    <a href="{{ url_for('weather') }}" class="btn btn-outline-info btn-sm">
+                        <i class="fas fa-cloud-sun me-2"></i>Weather Data
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

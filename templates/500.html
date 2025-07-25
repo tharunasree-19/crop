@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block title %}Server Error - Crop Yield System{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center align-items-center" style="min-height: 60vh;">
+        <div class="col-lg-6 col-md-8 text-center">
+            <div class="error-page">
+                <div class="error-icon mb-4">
+                    <i class="fas fa-exclamation-circle text-danger" style="font-size: 5rem;"></i>
+                </div>
+                
+                <h1 class="display-1 fw-bold text-danger">500</h1>
+                <h2 class="mb-3">Internal Server Error</h2>
+                <p class="lead text-muted mb-4">
+                    Oops! Something went wrong on our end. We're working to fix this issue. 
+                    Please try again in a few moments.
+                </p>
+                
+                <div class="error-actions">
+                    <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg me-3">
+                        <i class="fas fa-home me-2"></i>Go Home
+                    </a>
+                    
+                    <button onclick="window.location.reload()" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-redo me-2"></i>Try Again
+                    </button>
+                </div>
+                
+                <div class="mt-5">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="fas fa-info-circle me-2"></i>What can you do?
+                            </h6>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="text-center">
+                                        <i class="fas fa-clock text-primary fa-2x mb-2"></i>
+                                        <h6>Wait a moment</h6>
+                                        <small class="text-muted">The issue might be temporary</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="text-center">
+                                        <i class="fas fa-redo text-success fa-2x mb-2"></i>
+                                        <h6>Refresh the page</h6>
+                                        <small class="text-muted">Try reloading the current page</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="text-center">
+                                        <i class="fas fa-home text-info fa-2x mb-2"></i>
+                                        <h6>Go to homepage</h6>
+                                        <small class="text-muted">Start from the main page</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <div class="alert alert-info" role="alert">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Error ID:</strong> {{ now.strftime('%Y%m%d-%H%M%S') }}
+                        <br>
+                        <small>Please include this ID if you need to contact support.</small>
+                    </div>
+                </div>
+                
+                {% if session.email %}
+                <div class="mt-4">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="fas fa-user me-2"></i>Logged in as: {{ session.email }}
+                            </h6>
+                            <p class="card-text mb-3">
+                                <small class="text-muted">
+                                    You can access your dashboard or previous predictions once the issue is resolved.
+                                </small>
+                            </p>
+                            <div class="d-flex gap-2 justify-content-center">
+                                <a href="{{ url_for('dashboard') }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                                </a>
+                                <a href="{{ url_for('prediction') }}" class="btn btn-sm btn-outline-success">
+                                    <i class="fas fa-chart-line me-1"></i>Predictions
+                                </a>
+                                <a href="{{ url_for('profile') }}" class="btn btn-sm btn-outline-info">
+                                    <i class="fas fa-user-cog me-1"></i>Profile
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="mt-4">
+                    <hr>
+                    <p class="text-muted small">
+                        <i class="fas fa-envelope me-1"></i>
+                        If the problem persists, please contact our support team at 
+                        <a href="mailto:support@cropyield.com">support@cropyield.com</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.error-page {
+    padding: 2rem 0;
+}
+
+.error-icon {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.error-actions .btn {
+    transition: all 0.3s ease;
+}
+
+.error-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 768px) {
+    .display-1 {
+        font-size: 4rem;
+    }
+    
+    .error-actions .btn {
+        margin-bottom: 1rem;
+        width: 100%;
+    }
+    
+    .error-actions .btn.me-3 {
+        margin-right: 0 !important;
+    }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Crop Yield Management System{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Hero Section -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+            <h1 class="display-4 fw-bold text-success mb-4">
+                <i class="fas fa-seedling me-3"></i>Crop Yield Management System
+            </h1>
+            <p class="lead mb-5">
+                Optimize your agricultural planning with data-driven insights. Track field performance, 
+                monitor weather conditions, and maximize crop yields with our comprehensive platform.
+            </p>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row mb-5">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <div class="text-success mb-3">
+                        <i class="fas fa-map fa-3x"></i>
+                    </div>
+                    <h5 class="card-title">Field Management</h5>
+                    <p class="card-text">
+                        Manage your agricultural fields with detailed tracking of location, 
+                        soil type, crop varieties, and irrigation systems.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <div class="text-success mb-3">
+                        <i class="fas fa-chart-line fa-3x"></i>
+                    </div>
+                    <h5 class="card-title">Yield Tracking</h5>
+                    <p class="card-text">
+                        Record and analyze crop yields with quality scores, harvest data, 
+                        and performance comparisons across seasons.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <div class="text-success mb-3">
+                        <i class="fas fa-cloud-sun fa-3x"></i>
+                    </div>
+                    <h5 class="card-title">Weather Monitoring</h5>
+                    <p class="card-text">
+                        Stay informed with real-time weather data and receive alerts 
+                        for extreme conditions that may affect your crops.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AWS Features -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h3 class="card-title text-success mb-4">
+                        <i class="fab fa-aws me-2"></i>Powered by AWS Cloud
+                    </h3>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <div class="text-warning">
+                                <i class="fas fa-server fa-2x mb-2"></i>
+                            </div>
+                            <h6>EC2 Processing</h6>
+                            <small class="text-muted">Scalable compute for data analysis</small>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="text-info">
+                                <i class="fas fa-database fa-2x mb-2"></i>
+                            </div>
+                            <h6>DynamoDB Storage</h6>
+                            <small class="text-muted">Fast, secure data storage</small>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="text-danger">
+                                <i class="fas fa-bell fa-2x mb-2"></i>
+                            </div>
+                            <h6>SNS Alerts</h6>
+                            <small class="text-muted">Real-time notifications</small>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="text-success">
+                                <i class="fas fa-shield-alt fa-2x mb-2"></i>
+                            </div>
+                            <h6>IAM Security</h6>
+                            <small class="text-muted">Role-based access control</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="row justify-content-center">
+        <div class="col-lg-6 text-center">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Get Started Today</h4>
+                    <p class="card-text mb-4">
+                        Join farmers and agronomists who are already using our platform 
+                        to optimize their crop yields and make informed decisions.
+                    </p>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        <a href="{{ url_for('register') }}" class="btn btn-success btn-lg me-md-2">
+                            <i class="fas fa-user-plus me-2"></i>Register Now
+                        </a>
+                        <a href="{{ url_for('login') }}" class="btn btn-outline-success btn-lg">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Types -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="text-center mb-4">Who Can Use This System?</h3>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white text-center">
+                    <i class="fas fa-tractor fa-2x mb-2"></i>
+                    <h5>Farmers</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-2"></i>Manage your fields</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Record crop yields</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Track field performance</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Receive yield alerts</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card border-info">
+                <div class="card-header bg-info text-white text-center">
+                    <i class="fas fa-microscope fa-2x mb-2"></i>
+                    <h5>Agronomists</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-info me-2"></i>Monitor all fields</li>
+                        <li><i class="fas fa-check text-info me-2"></i>Add weather data</li>
+                        <li><i class="fas fa-check text-info me-2"></i>Analyze trends</li>
+                        <li><i class="fas fa-check text-info me-2"></i>Provide recommendations</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark text-center">
+                    <i class="fas fa-cog fa-2x mb-2"></i>
+                    <h5>Administrators</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-warning me-2"></i>System overview</li>
+                        <li><i class="fas fa-check text-warning me-2"></i>User management</li>
+                        <li><i class="fas fa-check text-warning me-2"></i>Full data access</li>
+                        <li><i class="fas fa-check text-warning me-2"></i>Platform maintenance</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

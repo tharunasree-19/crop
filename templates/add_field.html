@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Add Field - Crop Yield Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-plus-circle me-2"></i>Add New Field</h2>
+            <a href="{{ url_for('fields') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Fields
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="field_name" class="form-label">Field Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="field_name" name="field_name" 
+                               required placeholder="e.g., North Field, Plot A">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="location" class="form-label">Location <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="location" name="location" 
+                               required placeholder="e.g., Village, District, State">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="area_hectares" class="form-label">Area (Hectares) <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="area_hectares" name="area_hectares" 
+                               required step="0.01" min="0.01" placeholder="e.g., 2.5">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="soil_type" class="form-label">Soil Type <span class="text-danger">*</span></label>
+                        <select class="form-select" id="soil_type" name="soil_type" required>
+                            <option value="">Select soil type</option>
+                            <option value="loamy">Loamy</option>
+                            <option value="clay">Clay</option>
+                            <option value="sandy">Sandy</option>
+                            <option value="silt">Silt</option>
+                            <option value="black_cotton">Black Cotton</option>
+                            <option value="red">Red Soil</option>
+                            <option value="alluvial">Alluvial</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="crop_type" class="form-label">Primary Crop Type</label>
+                        <select class="form-select" id="crop_type" name="crop_type">
+                            <option value="">Select crop type</option>
+                            <option value="rice">Rice</option>
+                            <option value="wheat">Wheat</option>
+                            <option value="corn">Corn/Maize</option>
+                            <option value="cotton">Cotton</option>
+                            <option value="sugarcane">Sugarcane</option>
+                            <option value="soybean">Soybean</option>
+                            <option value="barley">Barley</option>
+                            <option value="millet">Millet</option>
+                            <option value="pulses">Pulses</option>
+                            <option value="vegetables">Vegetables</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="irrigation_type" class="form-label">Irrigation Type</label>
+                        <select class="form-select" id="irrigation_type" name="irrigation_type">
+                            <option value="rain-fed">Rain-fed</option>
+                            <option value="drip">Drip Irrigation</option>
+                            <option value="sprinkler">Sprinkler</option>
+                            <option value="flood">Flood Irrigation</option>
+                            <option value="canal">Canal</option>
+                            <option value="tube_well">Tube Well</option>
+                        </select>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Add Field
+                        </button>
+                        <a href="{{ url_for('fields') }}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h6 class="card-title"><i class="fas fa-info-circle me-2"></i>Field Information</h6>
+                <p class="card-text mb-0">
+                    <small class="text-muted">
+                        Add accurate field information to track yield performance effectively. 
+                        Fields marked with <span class="text-danger">*</span> are required.
+                    </small>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Register - Crop Yield Management System{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card">
+                <div class="card-header bg-success text-white text-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-plus me-2"></i>Create Account
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">
+                                    <i class="fas fa-user me-1"></i>Full Name *
+                                </label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">
+                                    <i class="fas fa-envelope me-1"></i>Email Address *
+                                </label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="password" class="form-label">
+                                    <i class="fas fa-lock me-1"></i>Password *
+                                </label>
+                                <input type="password" class="form-control" id="password" name="password" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="confirm_password" class="form-label">
+                                    <i class="fas fa-lock me-1"></i>Confirm Password *
+                                </label>
+                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="role" class="form-label">
+                                    <i class="fas fa-user-tag me-1"></i>Role *
+                                </label>
+                                <select class="form-select" id="role" name="role" required onchange="toggleFarmName()">
+                                    <option value="">Select your role</option>
+                                    <option value="farmer">Farmer</option>
+                                    <option value="agronomist">Agronomist</option>
+                                    <option value="admin">Administrator</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="form-label">
+                                    <i class="fas fa-phone me-1"></i>Phone Number
+                                </label>
+                                <input type="tel" class="form-control" id="phone" name="phone">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3" id="farm_name_field" style="display: none;">
+                            <label for="farm_name" class="form-label">
+                                <i class="fas fa-home me-1"></i>Farm Name
+                            </label>
+                            <input type="text" class="form-control" id="farm_name" name="farm_name" placeholder="Enter your farm name">
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <small>
+                                <i class="fas fa-info-circle me-1"></i>
+                                <strong>Role Information:</strong><br>
+                                • <strong>Farmer:</strong> Manage fields and record yield data<br>
+                                • <strong>Agronomist:</strong> Monitor all fields and add weather data<br>
+                                • <strong>Administrator:</strong> Full system access and user management
+                            </small>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-user-plus me-2"></i>Create Account
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <small class="text-muted">
+                        Already have an account? 
+                        <a href="{{ url_for('login') }}" class="text-success">Login here</a>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleFarmName() {
+    const roleSelect = document.getElementById('role');
+    const farmNameField = document.getElementById('farm_name_field');
+    
+    if (roleSelect.value === 'farmer') {
+        farmNameField.style.display = 'block';
+    } else {
+        farmNameField.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}Add Weather Data - Crop Yield System{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-thermometer-half me-2"></i>Add Weather Data</h2>
+                <a href="{{ url_for('weather') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Weather Data
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-cloud-sun me-2"></i>Weather Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="location" class="form-label">
+                                    <i class="fas fa-map-marker-alt me-1"></i>Location *
+                                </label>
+                                <input type="text" class="form-control" id="location" name="location" 
+                                       placeholder="Enter location (e.g., Village, District)" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="date" class="form-label">
+                                    <i class="fas fa-calendar me-1"></i>Date *
+                                </label>
+                                <input type="date" class="form-control" id="date" name="date" 
+                                       value="{{ today }}" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="temperature" class="form-label">
+                                    <i class="fas fa-thermometer-half me-1"></i>Temperature (°C) *
+                                </label>
+                                <input type="number" class="form-control" id="temperature" name="temperature" 
+                                       step="0.1" min="-50" max="60" placeholder="e.g., 25.5" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="humidity" class="form-label">
+                                    <i class="fas fa-tint me-1"></i>Humidity (%) *
+                                </label>
+                                <input type="number" class="form-control" id="humidity" name="humidity" 
+                                       min="0" max="100" placeholder="e.g., 65" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="rainfall" class="form-label">
+                                    <i class="fas fa-cloud-rain me-1"></i>Rainfall (mm) *
+                                </label>
+                                <input type="number" class="form-control" id="rainfall" name="rainfall" 
+                                       step="0.1" min="0" placeholder="e.g., 12.5" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="wind_speed" class="form-label">
+                                    <i class="fas fa-wind me-1"></i>Wind Speed (km/h)
+                                </label>
+                                <input type="number" class="form-control" id="wind_speed" name="wind_speed" 
+                                       step="0.1" min="0" placeholder="e.g., 15.0">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <label for="weather_condition" class="form-label">
+                                    <i class="fas fa-eye me-1"></i>Weather Condition
+                                </label>
+                                <select class="form-select" id="weather_condition" name="weather_condition">
+                                    <option value="clear">Clear</option>
+                                    <option value="partly_cloudy">Partly Cloudy</option>
+                                    <option value="cloudy">Cloudy</option>
+                                    <option value="rainy">Rainy</option>
+                                    <option value="stormy">Stormy</option>
+                                    <option value="foggy">Foggy</option>
+                                    <option value="windy">Windy</option>
+                                    <option value="hail">Hail</option>
+                                    <option value="snow">Snow</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <a href="{{ url_for('weather') }}" class="btn btn-secondary me-md-2">
+                                        <i class="fas fa-times me-2"></i>Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-2"></i>Save Weather Data
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Weather Tips Card -->
+            <div class="card mt-4">
+                <div class="card-header bg-info text-white">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>Data Collection Tips
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-thermometer-half text-danger me-2"></i>Temperature</h6>
+                            <small class="text-muted">
+                                • Record at the same time daily<br>
+                                • Avoid direct sunlight exposure<br>
+                                • Consider min/max temperatures
+                            </small>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-cloud-rain text-primary me-2"></i>Rainfall</h6>
+                            <small class="text-muted">
+                                • Measure total 24-hour rainfall<br>
+                                • Use proper rain gauge<br>
+                                • Record at consistent time
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Set maximum date to today
+    document.getElementById('date').max = '{{ today }}';
+    
+    // Form validation
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const temp = parseFloat(document.getElementById('temperature').value);
+        const humidity = parseFloat(document.getElementById('humidity').value);
+        const rainfall = parseFloat(document.getElementById('rainfall').value);
+        
+        if (temp < -50 || temp > 60) {
+            alert('Temperature seems unusual. Please verify the reading.');
+            e.preventDefault();
+            return;
+        }
+        
+        if (humidity < 0 || humidity > 100) {
+            alert('Humidity must be between 0-100%');
+            e.preventDefault();
+            return;
+        }
+        
+        if (rainfall < 0) {
+            alert('Rainfall cannot be negative');
+            e.preventDefault();
+            return;
+        }
+    });
+</script>
+{% endblock %}

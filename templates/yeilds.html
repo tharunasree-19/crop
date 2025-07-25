@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block title %}Yield Data - Crop Yield Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-chart-line me-2"></i>Yield Data</h2>
+            {% if session.role == 'farmer' %}
+            <a href="{{ url_for('record_yield') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Record New Yield
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% if yields %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Field Name</th>
+                                <th>Crop Type</th>
+                                <th>Harvest Date</th>
+                                <th>Yield/Hectare (tons)</th>
+                                <th>Total Yield (tons)</th>
+                                <th>Quality Score</th>
+                                {% if session.role in ['agronomist', 'admin'] %}
+                                <th>Farmer</th>
+                                {% endif %}
+                                <th>Weather</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for yield in yields %}
+                            <tr>
+                                <td>
+                                    <strong>{{ yield.field_name or yield.field_id }}</strong>
+                                </td>
+                                <td>
+                                    <span class="badge bg-success">{{ yield.crop_type|title }}</span>
+                                </td>
+                                <td>{{ yield.harvest_date }}</td>
+                                <td>
+                                    <strong class="text-primary">{{ "%.2f"|format(yield.yield_per_hectare) }}</strong>
+                                </td>
+                                <td>{{ "%.2f"|format(yield.total_yield) }}</td>
+                                <td>
+                                    {% if yield.quality_score %}
+                                        {% if yield.quality_score >= 4 %}
+                                            <span class="badge bg-success">{{ yield.quality_score }}/5</span>
+                                        {% elif yield.quality_score >= 3 %}
+                                            <span class="badge bg-warning">{{ yield.quality_score }}/5</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">{{ yield.quality_score }}/5</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                {% if session.role in ['agronomist', 'admin'] %}
+                                <td>
+                                    <small>{{ yield.farmer_name or yield.farmer_email }}</small>
+                                </td>
+                                {% endif %}
+                                <td>
+                                    {% if yield.weather_conditions %}
+                                        <small class="text-muted">{{ yield.weather_conditions[:20] }}{% if yield.weather_conditions|length > 20 %}...{% endif %}</small>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if yield.notes %}
+                                        <small class="text-muted" title="{{ yield.notes }}">
+                                            {{ yield.notes[:30] }}{% if yield.notes|length > 30 %}...{% endif %}
+                                        </small>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Total Records</h6>
+                        <h4>{{ yields|length }}</h4>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-clipboard-list fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Avg Yield/Ha</h6>
+                        <h4>{{ "%.2f"|format(yields|map(attribute='yield_per_hectare')|sum / yields|length) if yields else 0 }}</h4>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-seedling fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Total Yield</h6>
+                        <h4>{{ "%.1f"|format(yields|map(attribute='total_yield')|sum) if yields else 0 }}t</h4>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-weight-hanging fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Unique Fields</h6>
+                        <h4>{{ yields|map(attribute='field_id')|list|unique|length if yields else 0 }}</h4>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-map-marked-alt fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="fas fa-chart-line fa-4x text-muted mb-3"></i>
+                <h4 class="text-muted">No Yield Data Found</h4>
+                <p class="text-muted">
+                    {% if session.role == 'farmer' %}
+                        Start by recording your first harvest yield data.
+                    {% else %}
+                        No yield data has been recorded yet by farmers.
+                    {% endif %}
+                </p>
+                {% if session.role == 'farmer' %}
+                <a href="{{ url_for('record_yield') }}" class="btn btn-primary mt-2">
+                    <i class="fas fa-plus me-2"></i>Record First Yield
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %}Fields - Crop Yield Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2"><i class="fas fa-map me-2"></i>Fields Management</h1>
+    {% if session.role == 'farmer' %}
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <a href="{{ url_for('add_field') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Add New Field
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% if fields %}
+<div class="row mb-3">
+    <div class="col-md-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center">
+                <i class="fas fa-map fa-2x mb-2"></i>
+                <h4>{{ fields|length }}</h4>
+                <p class="mb-0">Total Fields</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <i class="fas fa-seedling fa-2x mb-2"></i>
+                <h4>{{ fields|selectattr('status', 'equalto', 'active')|list|length }}</h4>
+                <p class="mb-0">Active Fields</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-info text-white">
+            <div class="card-body text-center">
+                <i class="fas fa-ruler-combined fa-2x mb-2"></i>
+                <h4>{{ "%.1f"|format(fields|sum(attribute='area_hectares')|float) }}</h4>
+                <p class="mb-0">Total Area (Ha)</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-list me-2"></i>Field List</h5>
+        <div class="btn-group btn-group-sm" role="group">
+            <input type="text" class="form-control form-control-sm" id="searchField" placeholder="Search fields..." style="width: 200px;">
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" id="fieldsTable">
+                <thead class="table-light">
+                    <tr>
+                        <th>Field Name</th>
+                        <th>Owner</th>
+                        <th>Location</th>
+                        <th>Area (Ha)</th>
+                        <th>Crop Type</th>
+                        <th>Soil Type</th>
+                        <th>Irrigation</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for field in fields %}
+                    <tr>
+                        <td>
+                            <strong>{{ field.field_name }}</strong>
+                            <br><small class="text-muted">{{ field.field_id[:8] }}...</small>
+                        </td>
+                        <td>
+                            <div>
+                                <strong>{{ field.owner_name or 'Unknown' }}</strong>
+                                <br><small class="text-muted">{{ field.owner_email }}</small>
+                            </div>
+                        </td>
+                        <td>
+                            <i class="fas fa-map-marker-alt text-danger me-1"></i>
+                            {{ field.location }}
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary">{{ "%.2f"|format(field.area_hectares|float) }}</span>
+                        </td>
+                        <td>
+                            {% if field.crop_type %}
+                                <span class="badge bg-success">{{ field.crop_type }}</span>
+                            {% else %}
+                                <span class="text-muted">Not specified</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ field.soil_type or 'Unknown' }}</td>
+                        <td>
+                            <span class="badge bg-info">{{ field.irrigation_type or 'Rain-fed' }}</span>
+                        </td>
+                        <td>
+                            {% if field.status == 'active' %}
+                                <span class="badge bg-success">Active</span>
+                            {% else %}
+                                <span class="badge bg-warning">{{ field.status|title }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <small class="text-muted">{{ field.created_at|timeago if field.created_at else 'Unknown' }}</small>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <button type="button" class="btn btn-outline-info btn-sm" 
+                                        onclick="viewFieldDetails('{{ field.field_id }}')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                {% if session.role == 'farmer' and field.owner_email == session.email %}
+                                <a href="{{ url_for('record_yield') }}" class="btn btn-outline-success btn-sm">
+                                    <i class="fas fa-clipboard-list"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Field Details Modal -->
+<div class="modal fade" id="fieldDetailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-map me-2"></i>Field Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="fieldDetailsContent">
+                <div class="text-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<div class="card">
+    <div class="card-body text-center py-5">
+        <i class="fas fa-map fa-4x text-muted mb-4"></i>
+        <h4>No Fields Found</h4>
+        <p class="text-muted mb-4">
+            {% if session.role == 'farmer' %}
+                You haven't added any fields yet. Start by adding your first field to begin tracking crop yields.
+            {% else %}
+                No fields have been registered in the system yet.
+            {% endif %}
+        </p>
+        {% if session.role == 'farmer' %}
+        <a href="{{ url_for('add_field') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Add Your First Field
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Search functionality
+document.getElementById('searchField').addEventListener('keyup', function() {
+    const searchTerm = this.value.toLowerCase();
+    const tableRows = document.querySelectorAll('#fieldsTable tbody tr');
+    
+    tableRows.forEach(row => {
+        const rowText = row.textContent.toLowerCase();
+        if (rowText.includes(searchTerm)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+});
+
+// View field details
+function viewFieldDetails(fieldId) {
+    const modal = new bootstrap.Modal(document.getElementById('fieldDetailsModal'));
+    const content = document.getElementById('fieldDetailsContent');
+    
+    // Show loading spinner
+    content.innerHTML = `
+        <div class="text-center">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    `;
+    
+    modal.show();
+    
+    // Fetch field details
+    fetch(`/api/field_summary/${fieldId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                content.innerHTML = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-seedling me-2"></i>Field Information</h6>
+                            <table class="table table-sm">
+                                <tr><td><strong>Name:</strong></td><td>${data.data.field_name}</td></tr>
+                                <tr><td><strong>Area:</strong></td><td>${data.data.area_hectares} hectares</td></tr>
+                                <tr><td><strong>Crop Type:</strong></td><td>${data.data.crop_type || 'Not specified'}</td></tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-chart-line me-2"></i>Yield Summary</h6>
+                            <table class="table table-sm">
+                                <tr><td><strong>Total Harvests:</strong></td><td>${data.data.total_harvests}</td></tr>
+                                <tr><td><strong>Average Yield:</strong></td><td>${data.data.average_yield} tons/ha</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            } else {
+                content.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error loading field details: ${data.message}
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            content.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Error loading field details. Please try again.
+                </div>
+            `;
+        });
+}
+</script>
+{% endblock %}

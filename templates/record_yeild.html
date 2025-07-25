@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Record Yield - Crop Yield Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-clipboard-list me-2"></i>Record Yield Data</h2>
+            <a href="{{ url_for('yields') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Yields
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="field_id" class="form-label">Select Field <span class="text-danger">*</span></label>
+                        <select class="form-select" id="field_id" name="field_id" required>
+                            <option value="">Choose a field</option>
+                            {% for field in fields %}
+                            <option value="{{ field.field_id }}">
+                                {{ field.field_name }} ({{ field.area_hectares }}ha) - {{ field.location }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="crop_type" class="form-label">Crop Type <span class="text-danger">*</span></label>
+                        <select class="form-select" id="crop_type" name="crop_type" required>
+                            <option value="">Select crop type</option>
+                            <option value="rice">Rice</option>
+                            <option value="wheat">Wheat</option>
+                            <option value="corn">Corn/Maize</option>
+                            <option value="cotton">Cotton</option>
+                            <option value="sugarcane">Sugarcane</option>
+                            <option value="soybean">Soybean</option>
+                            <option value="barley">Barley</option>
+                            <option value="millet">Millet</option>
+                            <option value="pulses">Pulses</option>
+                            <option value="vegetables">Vegetables</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="harvest_date" class="form-label">Harvest Date <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="harvest_date" name="harvest_date" 
+                               required max="{{ today }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="yield_per_hectare" class="form-label">Yield per Hectare (tons) <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="yield_per_hectare" name="yield_per_hectare" 
+                               required step="0.01" min="0.01" placeholder="e.g., 3.5">
+                        <div class="form-text">Enter the yield in tons per hectare</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="quality_score" class="form-label">Quality Score (1-5)</label>
+                        <select class="form-select" id="quality_score" name="quality_score">
+                            <option value="">Rate the crop quality</option>
+                            <option value="5">5 - Excellent</option>
+                            <option value="4">4 - Good</option>
+                            <option value="3">3 - Average</option>
+                            <option value="2">2 - Poor</option>
+                            <option value="1">1 - Very Poor</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="weather_conditions" class="form-label">Weather Conditions During Growth</label>
+                        <select class="form-select" id="weather_conditions" name="weather_conditions">
+                            <option value="">Select weather conditions</option>
+                            <option value="ideal">Ideal (Good rainfall, moderate temperature)</option>
+                            <option value="drought">Drought conditions</option>
+                            <option value="excessive_rain">Excessive rainfall</option>
+                            <option value="hot">Very hot weather</option>
+                            <option value="cold">Cold weather</option>
+                            <option value="storms">Storms/cyclones</option>
+                            <option value="mixed">Mixed conditions</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Additional Notes</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="3" 
+                                  placeholder="Any additional observations, fertilizers used, pest issues, etc."></textarea>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Record Yield Data
+                        </button>
+                        <a href="{{ url_for('yields') }}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h6 class="card-title"><i class="fas fa-lightbulb me-2"></i>Tips for Accurate Yield Recording</h6>
+                <ul class="mb-0">
+                    <li>Record yield data as soon as possible after harvest</li>
+                    <li>Include weather conditions that may have affected crop growth</li>
+                    <li>Be accurate with yield measurements for better analytics</li>
+                    <li>Quality scores help track crop performance over time</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Set today's date as default for harvest date
+    document.getElementById('harvest_date').value = new Date().toISOString().split('T')[0];
+</script>
+{% endblock %}
